@@ -13,3 +13,5 @@ npx hardhat node
 node scripts/sample-script.js
 npx hardhat help
 ```
+
+contract address: 0xeDeb5ECb0e1AFC92c28d22aFdD4659418c3a3225

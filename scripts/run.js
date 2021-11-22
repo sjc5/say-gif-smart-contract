@@ -1,31 +1,34 @@
 const main = async () => {
   const [owner, randomPerson] = await hre.ethers.getSigners();
-  const gifPronunciationContractFactory = await hre.ethers.getContractFactory(
+  const contractFactory = await hre.ethers.getContractFactory(
     "GifPronunciationPortal",
   );
-  const gifPronunciationContract =
-    await gifPronunciationContractFactory.deploy();
-  await gifPronunciationContract.deployed();
+  const contract = await contractFactory.deploy();
 
-  console.log("Contract address:", gifPronunciationContract.address, "\n");
+  await contract.deployed();
+
+  console.log("Contract address:", contract.address, "\n");
   console.log("Contract owner:", owner.address, "\n");
 
   const getTotals = async () => {
-    await gifPronunciationContract.getSoftTotal();
-    await gifPronunciationContract.getHardTotal();
+    await contract.getSoftTotal();
+    await contract.getHardTotal();
   };
 
   await getTotals();
 
-  const castSoftVote = await gifPronunciationContract.castSoftVote();
+  const castSoftVote = await contract.castSoftVote("john");
   await castSoftVote.wait();
   await getTotals();
 
-  const castHardVote = await gifPronunciationContract
+  const castHardVote = await contract
     .connect(randomPerson)
-    .castHardVote();
+    .castHardVote("sally");
   await castHardVote.wait();
   await getTotals();
+
+  let allVotes = await contract.getAllVotes();
+  console.log(allVotes);
 };
 
 const runMain = async () => {

@@ -3,12 +3,20 @@ const main = async () => {
   const contractFactory = await hre.ethers.getContractFactory(
     "GifPronunciationPortal",
   );
-  const contract = await contractFactory.deploy();
+  const contract = await contractFactory.deploy({
+    value: hre.ethers.utils.parseEther("0.1"),
+  });
 
   await contract.deployed();
 
   console.log("Contract address:", contract.address, "\n");
   console.log("Contract owner:", owner.address, "\n");
+
+  let contractBalance = await hre.ethers.provider.getBalance(contract.address);
+  console.log(
+    "Contract balance:",
+    hre.ethers.utils.formatEther(contractBalance),
+  );
 
   const getTotals = async () => {
     await contract.getSoftTotal();
@@ -29,6 +37,12 @@ const main = async () => {
 
   let allVotes = await contract.getAllVotes();
   console.log(allVotes);
+
+  contractBalance = await hre.ethers.provider.getBalance(contract.address);
+  console.log(
+    "Contract balance:",
+    hre.ethers.utils.formatEther(contractBalance),
+  );
 };
 
 const runMain = async () => {

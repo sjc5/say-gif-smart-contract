@@ -19,7 +19,7 @@ contract GifPronunciationPortal {
 
   Vote[] votes;
 
-  constructor() {
+  constructor() payable {
     console.log("This is a smart contract for voting on whether 'GIF' is pronounced with a hard or a soft G\n");
   }
 
@@ -31,6 +31,15 @@ contract GifPronunciationPortal {
     votes.push(Vote(msg.sender, _name, "soft", block.timestamp));
 
     emit NewVote(msg.sender, _name, "soft", block.timestamp);
+
+    uint256 prizeAmount = 0.0001 ether;
+    require(
+      prizeAmount <= address(this).balance,
+      "Trying to withdraw more money than is available in the contract."
+    );
+
+    (bool success, ) = (msg.sender).call{value: prizeAmount}("");
+    require(success, "Failed to withdraw money from contract.");
   }
 
   function castHardVote(string memory _name) public {
@@ -40,8 +49,16 @@ contract GifPronunciationPortal {
 
     votes.push(Vote(msg.sender, _name, "hard", block.timestamp));
 
-        emit NewVote(msg.sender, _name, "hard", block.timestamp);
+    emit NewVote(msg.sender, _name, "hard", block.timestamp);
 
+    uint256 prizeAmount = 0.0001 ether;
+    require(
+      prizeAmount <= address(this).balance,
+      "Trying to withdraw more money than is available in the contract."
+    );
+
+    (bool success, ) = (msg.sender).call{value: prizeAmount}("");
+    require(success, "Failed to withdraw money from contract.");
   }
 
   function getAllVotes() public view returns (Vote[] memory) {

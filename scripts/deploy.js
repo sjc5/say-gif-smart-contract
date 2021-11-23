@@ -9,7 +9,7 @@ const main = async () => {
     "GifPronunciationPortal",
   );
   const contract = await contractFactory.deploy({
-    value: hre.ethers.utils.parseEther("0.001"),
+    value: hre.ethers.utils.parseEther("0.03"),
   });
   await contract.deployed();
 

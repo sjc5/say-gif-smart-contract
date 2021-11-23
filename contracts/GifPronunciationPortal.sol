@@ -34,10 +34,10 @@ contract GifPronunciationPortal {
     lastVoted[msg.sender] = block.timestamp;
 
     seed = (block.difficulty + block.timestamp + seed) % 100;
-    if (seed <= 50) {
+    if (seed <= 1) {
       console.log("%s won!", msg.sender);
 
-      uint256 prizeAmount = 0.0001 ether;
+      uint256 prizeAmount = 0.00000001 ether;
       require(
         prizeAmount <= address(this).balance,
         "Trying to withdraw more money than is available in the contract."

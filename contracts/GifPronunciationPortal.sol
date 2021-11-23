@@ -29,8 +29,8 @@ contract GifPronunciationPortal {
     seed = (block.timestamp + block.difficulty) % 100;
   }
 
-  function castVote(string memory _name, bool _isSoft) public {
-    require(lastVoted[msg.sender] + 60 minutes < block.timestamp, "Wait 1 hour");
+  function castVote(string memory _name, bool isSoft) public {
+    require(lastVoted[msg.sender] + 7 seconds < block.timestamp, "* * * * * * * YOU CAN ONLY VOTE ONCE EVERY 7 SECONDS * * * * * * *");
     lastVoted[msg.sender] = block.timestamp;
 
     seed = (block.difficulty + block.timestamp + seed) % 100;
@@ -47,7 +47,7 @@ contract GifPronunciationPortal {
       require(success, "Failed to withdraw money from contract.");
     }
 
-    if (_isSoft) {
+    if (isSoft) {
       softTotal +=1;
       console.log("%s thinks GIF is pronounced with a soft G (as in giraffe)\n", _name);
       votes.push(Vote(msg.sender, _name, "soft", block.timestamp));

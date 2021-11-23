@@ -8,11 +8,12 @@ contract GifPronunciationPortal {
   uint256 softTotal;
   uint256 hardTotal;
 
-  event NewVote(address indexed from, uint256 timestamp, string name);
+  event NewVote(address indexed from, string name, string vote, uint256 timestamp);
 
   struct Vote {
     address voter;
     string name;
+    string vote;
     uint256 timestamp;
   }
 
@@ -27,9 +28,9 @@ contract GifPronunciationPortal {
 
     console.log("%s thinks GIF is pronounced with a soft G (as in giraffe\n)", _name);
 
-    votes.push(Vote(msg.sender, _name, block.timestamp));
+    votes.push(Vote(msg.sender, _name, "soft", block.timestamp));
 
-    emit NewVote(msg.sender, block.timestamp, _name);
+    emit NewVote(msg.sender, _name, "soft", block.timestamp);
   }
 
   function castHardVote(string memory _name) public {
@@ -37,9 +38,10 @@ contract GifPronunciationPortal {
 
     console.log("%s thinks GIF is pronounced with a hard G (as in gorilla\n)", _name);
 
-    votes.push(Vote(msg.sender, _name, block.timestamp));
+    votes.push(Vote(msg.sender, _name, "hard", block.timestamp));
 
-    emit NewVote(msg.sender, block.timestamp, _name);
+        emit NewVote(msg.sender, _name, "hard", block.timestamp);
+
   }
 
   function getAllVotes() public view returns (Vote[] memory) {

@@ -25,13 +25,13 @@ const main = async () => {
 
   await getTotals();
 
-  const castSoftVote = await contract.castSoftVote("john");
+  const castSoftVote = await contract.castVote("john", true);
   await castSoftVote.wait();
   await getTotals();
 
   const castHardVote = await contract
     .connect(randomPerson)
-    .castHardVote("sally");
+    .castVote("sally", false);
   await castHardVote.wait();
   await getTotals();
 

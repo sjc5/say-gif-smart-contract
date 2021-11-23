@@ -8,6 +8,8 @@ contract GifPronunciationPortal {
   uint256 softTotal;
   uint256 hardTotal;
 
+  uint256 private seed;
+
   event NewVote(address indexed from, string name, string vote, uint256 timestamp);
 
   struct Vote {
@@ -19,46 +21,43 @@ contract GifPronunciationPortal {
 
   Vote[] votes;
 
+  mapping(address => uint256) public lastVoted;
+
   constructor() payable {
     console.log("This is a smart contract for voting on whether 'GIF' is pronounced with a hard or a soft G\n");
+
+    seed = (block.timestamp + block.difficulty) % 100;
   }
 
-  function castSoftVote(string memory _name) public {
-    softTotal +=1;
+  function castVote(string memory _name, bool _isSoft) public {
+    require(lastVoted[msg.sender] + 60 minutes < block.timestamp, "Wait 1 hour");
+    lastVoted[msg.sender] = block.timestamp;
 
-    console.log("%s thinks GIF is pronounced with a soft G (as in giraffe\n)", _name);
+    seed = (block.difficulty + block.timestamp + seed) % 100;
+    if (seed <= 50) {
+      console.log("%s won!", msg.sender);
 
-    votes.push(Vote(msg.sender, _name, "soft", block.timestamp));
+      uint256 prizeAmount = 0.0001 ether;
+      require(
+        prizeAmount <= address(this).balance,
+        "Trying to withdraw more money than is available in the contract."
+      );
 
-    emit NewVote(msg.sender, _name, "soft", block.timestamp);
+      (bool success, ) = (msg.sender).call{value: prizeAmount}("");
+      require(success, "Failed to withdraw money from contract.");
+    }
 
-    uint256 prizeAmount = 0.0001 ether;
-    require(
-      prizeAmount <= address(this).balance,
-      "Trying to withdraw more money than is available in the contract."
-    );
-
-    (bool success, ) = (msg.sender).call{value: prizeAmount}("");
-    require(success, "Failed to withdraw money from contract.");
-  }
-
-  function castHardVote(string memory _name) public {
-    hardTotal +=1;
-
-    console.log("%s thinks GIF is pronounced with a hard G (as in gorilla\n)", _name);
-
-    votes.push(Vote(msg.sender, _name, "hard", block.timestamp));
-
-    emit NewVote(msg.sender, _name, "hard", block.timestamp);
-
-    uint256 prizeAmount = 0.0001 ether;
-    require(
-      prizeAmount <= address(this).balance,
-      "Trying to withdraw more money than is available in the contract."
-    );
-
-    (bool success, ) = (msg.sender).call{value: prizeAmount}("");
-    require(success, "Failed to withdraw money from contract.");
+    if (_isSoft) {
+      softTotal +=1;
+      console.log("%s thinks GIF is pronounced with a soft G (as in giraffe)\n", _name);
+      votes.push(Vote(msg.sender, _name, "soft", block.timestamp));
+      emit NewVote(msg.sender, _name, "soft", block.timestamp);
+    } else {
+      hardTotal +=1;
+      console.log("%s thinks GIF is pronounced with a hard G (as in gorilla)\n", _name);
+      votes.push(Vote(msg.sender, _name, "hard", block.timestamp));
+      emit NewVote(msg.sender, _name, "hard", block.timestamp);
+    }
   }
 
   function getAllVotes() public view returns (Vote[] memory) {
